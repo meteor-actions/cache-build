@@ -1,0 +1,27 @@
+name: Cache build
+description: Caches last Meteor build
+inputs:
+  key:
+    description: 'Cache key'
+    required: true
+    default: 'default'
+runs:
+  using: composite
+  steps:
+    - name: Cache ./.meteor/local 💾
+      uses: actions/cache@v2
+      env:
+        cache-name: cache-meteor-local
+      with:
+        path: |
+          ./.meteor/local/resolver-result-cache.json
+          ./.meteor/local/plugin-cache
+          ./.meteor/local/isopacks
+          ./.meteor/local/bundler-cache/scanner
+        key: ${{ runner.os }}-${{ env.cache-name }}-${{ env.METEOR_RELEASE }}-${{ hashFiles('.meteor/release') }}-${{ hashFiles('.meteor/versions') }}-${{ github.ref }}-${{ github.sha }}-${{ inputs.key }}
+        restore-keys: |
+          ${{ runner.os }}-${{ env.cache-name }}-${{ env.METEOR_RELEASE }}-${{ hashFiles('.meteor/release') }}-${{ hashFiles('.meteor/versions') }}-${{ github.ref }}-${{ github.sha }}-
+          ${{ runner.os }}-${{ env.cache-name }}-${{ env.METEOR_RELEASE }}-${{ hashFiles('.meteor/release') }}-${{ hashFiles('.meteor/versions') }}-${{ github.ref }}-
+          ${{ runner.os }}-${{ env.cache-name }}-${{ env.METEOR_RELEASE }}-${{ hashFiles('.meteor/release') }}-${{ hashFiles('.meteor/versions') }}-
+          ${{ runner.os }}-${{ env.cache-name }}-${{ env.METEOR_RELEASE }}-${{ hashFiles('.meteor/release') }}-
+          ${{ runner.os }}-${{ env.cache-name }}-${{ env.METEOR_RELEASE }}-
